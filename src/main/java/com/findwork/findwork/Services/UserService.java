@@ -1,7 +1,9 @@
 package com.findwork.findwork.Services;
 
+import com.findwork.findwork.Entities.SavedFilter;
 import com.findwork.findwork.Entities.Users.UserCompany;
 import com.findwork.findwork.Entities.Users.UserPerson;
+import com.findwork.findwork.Repositories.SavedFilterRepository;
 import com.findwork.findwork.Repositories.UserCompanyRepository;
 import com.findwork.findwork.Repositories.UserPersonRepository;
 import com.findwork.findwork.Requests.EditCompanyRequest;
@@ -15,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private final UserCompanyRepository companyRepo;
     private final UserPersonRepository personRepo;
+    private final SavedFilterRepository savedFilterRepo;
     private final BCryptPasswordEncoder encoder;
 
     @Override
@@ -114,5 +118,17 @@ public class UserService implements UserDetailsService {
 
     public UserPerson loadUserById(UUID id) {
         return personRepo.findUserPersonById(id);
+    }
+
+    public List<SavedFilter> loadSavedFiltersById(UUID id){ return savedFilterRepo.findAllByUserPerson_Id(id); }
+
+    public SavedFilter createSavedFilter(SavedFilter sf) {
+        try{
+            savedFilterRepo.save(sf);
+        }catch (Exception ex){
+            System.out.printf(ex.toString());
+            return null;
+        }
+        return sf;
     }
 }

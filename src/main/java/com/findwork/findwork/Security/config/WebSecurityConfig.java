@@ -35,6 +35,7 @@ public class WebSecurityConfig {
                 .antMatchers("/offers/{id}/**", "/user/{id}/edit").hasAuthority("User")
                 .antMatchers(HttpMethod.POST, "/user/{id}").hasAuthority("User")
                 .antMatchers("user/{id}").authenticated()
+                .antMatchers(HttpMethod.POST,"/offers/saveFilter/**").permitAll()
                 .and()
                 .formLogin()
                 .loginPage("/login")

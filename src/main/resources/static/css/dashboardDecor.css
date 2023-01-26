@@ -60,12 +60,7 @@ body{
     text-transform: none;
     font-variant-position: normal;
 }
-#jobLevel{
-    margin-top: 10px;
-    margin-bottom: 5px;
-    border-radius: 15px;
-}
-#jobCategory{
+.filterField{
     margin-top: 10px;
     margin-bottom: 5px;
     border-radius: 15px;

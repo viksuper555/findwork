@@ -1,8 +1,6 @@
 package com.findwork.findwork.Services;
 
-import com.findwork.findwork.Entities.JobApplication;
-import com.findwork.findwork.Entities.JobOffer;
-import com.findwork.findwork.Entities.UserSavedOffer;
+import com.findwork.findwork.Entities.*;
 import com.findwork.findwork.Entities.Users.UserCompany;
 import com.findwork.findwork.Entities.Users.UserPerson;
 import com.findwork.findwork.Enums.Category;
@@ -46,13 +44,9 @@ public class OfferService {
         if (search == null && category == null && level == null)
             return jobRepo.findAll();
 
-        Category jobCategory = null;
-        JobLevel jobLevel = null;
-
-        if (category != null && !category.equals("--Any--"))
-            jobCategory = Category.valueOf(category);
-        if (level != null && !level.equals("--Any--"))
-            jobLevel = JobLevel.valueOf(level);
+        var filters = parseFilters(search, level, category);
+        Category jobCategory = filters.getJobCategory();
+        JobLevel jobLevel = filters.getJobLevel();
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<JobOffer> cq = cb.createQuery(JobOffer.class);
@@ -179,5 +173,16 @@ public class OfferService {
         UserSavedOffer saved = savedOffersRepo.findUserSavedOfferByUserAndOffer(user, offer);
 
         return saved != null;
+    }
+    public Filters parseFilters(String search, String level, String category){
+        Category categoryEnum = null;
+        JobLevel levelEnum = null;
+
+        if (category != null && !category.equals("--Any--"))
+            categoryEnum = Category.valueOf(category);
+        if (level != null && !level.equals("--Any--"))
+            levelEnum = JobLevel.valueOf(level);
+
+        return new Filters(search, levelEnum, categoryEnum);
     }
 }

@@ -89,12 +89,12 @@ p{
     font-size: 22px;
     font-family: "Comic Sans MS", cursive, sans-serif;
 }
-#jobLevel{
+#level{
     margin-top: 10px;
     margin-bottom: 5px;
     border-radius: 10px;
 }
-#jobCategory{
+#category{
     margin-top: 10px;
     margin-bottom: 5px;
     border-radius: 10px;

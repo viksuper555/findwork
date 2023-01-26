@@ -12,6 +12,8 @@
 	        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
 	        crossorigin="anonymous"></script>
 	<title>Offers</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+	<script type="text/javascript" th:src="@{/js/ajax.js}"></script>
 </head>
 <body>
 <!--TODO: finish-->
@@ -19,21 +21,28 @@
 <div class="first">
 	<h1 class="dashboard-title">Offers</h1>
 	<div class="col-4">
-		<form th:action="@{/offers/}" role="search" method="get">
+		<form th:action="@{/offers/}" role="search" method="GET">
 			<div>
 				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
 			</div>
 			<div>
 				<label for="jobLevel">Position level:</label>
-				<select id="jobLevel" name="jobLevel">
+				<select id="jobLevel" class="filterField" name="level">
 					<option>--Any--</option>
-					<option th:each="level: ${levels}" th:value="${level}" th:text="${level}"></option>
+					<option th:each="lvl: ${levels}" th:selected="(${lvl} == ${param.level})" th:value="${lvl}" th:text="${lvl}"></option>
 				</select>
 				<label for="jobCategory">Category:</label>
-				<select id="jobCategory" name="jobCategory">
+				<select id="jobCategory" class="filterField" name="category">
 					<option>--Any--</option>
-					<option th:each="category: ${categories}" th:value="${category}" th:text="${category}"></option>
+					<option th:each="cat: ${categories}" th:selected="(${cat} == ${param.category})"  th:value="${cat}" th:text="${cat}"></option>
 				</select>
+				<label for="savedFilters">Saved filters:</label>
+				<select id="savedFilters" class="filterField" name="savedFilters">
+					<option>--Any--</option>
+					<option th:each="filter: ${savedFilters}" th:value="${filter}" th:text="${filter}"></option>
+				</select>
+				<button class="styleButton" type="submit" name="save" value=true>Save</button>
+				<!--				<button class="styleButton" th:attr="onclick=|sendRequest('${level}')|">Save</button>-->
 			</div>
 			<div>
 				<button class="styleButton" type="submit">Search</button>

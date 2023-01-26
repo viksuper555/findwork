@@ -2,6 +2,7 @@ package com.findwork.findwork.Controllers;
 
 import com.findwork.findwork.Entities.JobApplication;
 import com.findwork.findwork.Entities.JobOffer;
+import com.findwork.findwork.Entities.SavedFilter;
 import com.findwork.findwork.Entities.Users.UserCompany;
 import com.findwork.findwork.Entities.Users.UserPerson;
 import com.findwork.findwork.Enums.Category;
@@ -9,6 +10,7 @@ import com.findwork.findwork.Enums.JobLevel;
 import com.findwork.findwork.Requests.CreateJobOfferRequest;
 import com.findwork.findwork.Requests.EditJobOfferRequest;
 import com.findwork.findwork.Services.OfferService;
+import com.findwork.findwork.Services.UserService;
 import com.findwork.findwork.Services.ValidationService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -26,25 +28,53 @@ import java.util.UUID;
 public class JobOfferController {
     private final ValidationService validationService;
     private final OfferService offerService;
+    private final UserService userService;
 
     @GetMapping("/")
-    public String getAllOffers(Model model,
+    public String getAllOffers(Model model, Authentication auth,
                                @RequestParam(required = false) String search,
-                               @RequestParam(required = false) String jobCategory,
-                               @RequestParam(required = false) String jobLevel) {
+                               @RequestParam(required = false) String category,
+                               @RequestParam(required = false) String level,
+                               @RequestParam(required = false) Boolean save) {
+        UserPerson user = null;
+        if (auth != null) {
+            user = (UserPerson) auth.getPrincipal();
+        }
+
         List<JobOffer> offers;
 
-        if (jobCategory != null && jobCategory.equals("--Any--"))
-            jobCategory = null;
+        if (category != null && category.equals("--Any--"))
+            category = null;
 
-        if (jobLevel != null && jobLevel.equals("--Any--"))
-            jobLevel = null;
+        if (level != null && level.equals("--Any--"))
+            level = null;
 
-        offers = offerService.getOffers(search, jobCategory, jobLevel);
+        offers = offerService.getOffers(search, category, level);
 
         model.addAttribute("offers", offers);
+        model.addAttribute("selectedLevel", level);
         model.addAttribute("levels", JobLevel.values());
+        model.addAttribute("selectedCategory", category);
         model.addAttribute("categories", Category.values());
+        if(user != null)
+        {
+            List<SavedFilter> savedFilters = userService.loadSavedFiltersById(user.getId());
+            model.addAttribute("savedFilters", savedFilters);
+        }
+
+        if(save != null && save){
+            if(user == null){
+                System.out.print("Cannot save user filters. User not logged in.");
+                return "offers";
+            }
+
+            var filters = offerService.parseFilters(search, level, category);
+            Category categoryEnum = filters.getJobCategory();
+            JobLevel levelEnum = filters.getJobLevel();
+
+            userService.createSavedFilter(new SavedFilter(user, levelEnum, categoryEnum));
+            return "offers";
+        }
         return "offers";
     }
 
