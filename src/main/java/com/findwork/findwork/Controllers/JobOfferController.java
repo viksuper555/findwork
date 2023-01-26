@@ -71,8 +71,9 @@ public class JobOfferController {
             var filters = offerService.parseFilters(search, level, category);
             Category categoryEnum = filters.getJobCategory();
             JobLevel levelEnum = filters.getJobLevel();
+            search = filters.getSearch();
 
-            userService.createSavedFilter(new SavedFilter(user, levelEnum, categoryEnum));
+            userService.createSavedFilter(new SavedFilter(user, search, levelEnum, categoryEnum));
             return "offers";
         }
         return "offers";

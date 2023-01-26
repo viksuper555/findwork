@@ -20,6 +20,9 @@ public class SavedFilter {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @GeneratedValue(generator = "UUID")
     private UUID id;
+
+    @Column(columnDefinition = "TEXT")
+    private String search;
     @Enumerated
     private JobLevel jobLevel;
 
@@ -29,8 +32,9 @@ public class SavedFilter {
     @ManyToOne(cascade = {CascadeType.REFRESH})
     private UserPerson userPerson;
 
-    public SavedFilter(UserPerson userPerson, JobLevel jobLevel, Category jobCategory) {
+    public SavedFilter(UserPerson userPerson, String search, JobLevel jobLevel, Category jobCategory) {
         this.userPerson = userPerson;
+        this.search = search;
         this.jobLevel = jobLevel;
         this.jobCategory = jobCategory;
     }
